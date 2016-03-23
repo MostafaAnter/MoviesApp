@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#bf3026</color>
+    <color name="colorPrimaryDark">#8b2221</color>
+    <color name="colorAccent">#ebce8e</color>
+    <!-- for custom item list -->
+    <color name="timestamp">#a0a3a7</color>
+    <color name="link">#0a80d1</color>
+    <!-- for activity background -->
+    <color name="background">#ecf0f1</color>
+    <!-- swipe colors -->
+    <color name="swipe_color_1">#B6DB49</color>
+    <color name="swipe_color_2">#99CC00</color>
+    <color name="swipe_color_3">#8ABD00</color>
+    <color name="swipe_color_4">#7CAF00</color>
+</resources>
