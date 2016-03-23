@@ -87,7 +87,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     Log.d(TAG, "Element " + getPosition() + " clicked.");
                     if (MainActivity.mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(DetailsFragment.ARG_ITEM_ID, getPosition() + "");
+                        arguments.putSerializable(DetailsFragment.ARG_ITEM_ID, mDataSet.get(getPosition()));
                         DetailsFragment fragment = new DetailsFragment();
                         fragment.setArguments(arguments);
                         ((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction()
@@ -96,8 +96,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, DetailsActivity.class);
-                        intent.putExtra(DetailsFragment.ARG_ITEM_ID, getPosition());
-
+                        intent.putExtra(DetailsFragment.ARG_ITEM_ID, mDataSet.get(getPosition()));
                         context.startActivity(intent);
                     }
                 }

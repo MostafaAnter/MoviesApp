@@ -1,9 +1,11 @@
 package mr_anter.moviesapp.models;
 
+import java.io.Serializable;
+
 /**
  * Created by mostafa on 20/03/16.
  */
-public class MoviesPojo {
+public class MoviesPojo implements Serializable {
     private String
             poster_path,
             backdrop_path,
