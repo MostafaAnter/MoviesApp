@@ -27,8 +27,6 @@ dependencies {
     // for recycler view
     compile 'com.android.support:cardview-v7:23.2.0'
     compile 'com.android.support:recyclerview-v7:23.2.0'
-    // favorite button
-    compile 'com.github.ivbaranov:materialfavoritebutton:0.1.2'
     // picasso
     compile 'com.squareup.picasso:picasso:2.5.2'
     // volley dependencies

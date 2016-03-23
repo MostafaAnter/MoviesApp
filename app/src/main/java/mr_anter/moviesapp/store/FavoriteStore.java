@@ -39,6 +39,10 @@ public class FavoriteStore {
         return noteList;
     }
 
+    public boolean findItem(String value, String key){
+        return value.equalsIgnoreCase(favoritePrefs.getString(key, ""));
+    }
+
     public boolean update(FavoriteModel note) {
 
         SharedPreferences.Editor editor = favoritePrefs.edit();

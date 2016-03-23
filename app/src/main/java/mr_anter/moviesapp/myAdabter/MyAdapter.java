@@ -1,5 +1,9 @@
 package mr_anter.moviesapp.myAdabter;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,20 +14,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mr_anter.moviesapp.R;
 import mr_anter.moviesapp.activities.DetailsActivity;
 import mr_anter.moviesapp.activities.MainActivity;
 import mr_anter.moviesapp.fragments.DetailsFragment;
 import mr_anter.moviesapp.fragments.ItemsFragment;
+import mr_anter.moviesapp.models.FavoriteModel;
 import mr_anter.moviesapp.models.MoviesPojo;
+import mr_anter.moviesapp.store.FavoriteStore;
 import mr_anter.moviesapp.utils.SquaredImageView;
 
 
@@ -34,6 +45,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private static final String TAG = "CustomAdapter";
     private static Context mContext;
     private List<MoviesPojo> mDataSet;
+
+    // belong like button animations
+    private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
+    private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
+    private final Map<RecyclerView.ViewHolder, AnimatorSet> likeAnimations = new HashMap<>();
+    private final ArrayList<Integer> likedPositions = new ArrayList<>();
+    // put control on one item selected
+    private int lastCheckedPosition = -1;
 
 
 
@@ -50,13 +69,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     /**
      * Provide a reference to the type of views (custom ViewHolder)
      */
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView mainTitel;
         private final TextView timeStamp;
         private final TextView textStatusMsg;
         private final SquaredImageView imageView;
 
-        private final MaterialFavoriteButton favorite;
+        private final Button favorite;
         private final ProgressBar mProgress;
 
         public ViewHolder(View v) {
@@ -87,7 +106,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             timeStamp = (TextView) v.findViewById(R.id.timestamp);
             textStatusMsg = (TextView) v.findViewById(R.id.txtStatusMsg);
             imageView = (SquaredImageView) v.findViewById(R.id.feedImage1);
-            favorite = (MaterialFavoriteButton) v.findViewById(R.id.favorite_button);
+            favorite = (Button) v.findViewById(R.id.favorite_button);
             mProgress = (ProgressBar) v.findViewById(R.id.progressBar);
         }
 
@@ -108,7 +127,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         }
 
 
-        public MaterialFavoriteButton getFavorite() {
+        public Button getFavorite() {
             return favorite;
         }
 
@@ -176,15 +195,93 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             viewHolder.getImageView().setVisibility(View.GONE);
         }
 
-        //viewHolder.getImageView().setImageBitmap();
-        // To avoid triggering animation while re-rendering item view
-        viewHolder.getFavorite().setFavorite(false, false);
+        // like button
+        viewHolder.getFavorite().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lastCheckedPosition = position;
+                notifyItemRangeChanged(0, mDataSet.size());
+
+                if (!likedPositions.contains(position)) {
+                    likedPositions.add(position);
+                    updateHeartButton(viewHolder, true);
+                }
+                // add to my database
+                addItem(position);
+
+            }
+        });
+        if(position == lastCheckedPosition){
+            viewHolder.getFavorite().setBackgroundResource(R.drawable.ic_favorite_24dp);
+        }else if (new FavoriteStore(mContext).findItem(mDataSet.get(position).getId(),
+                mDataSet.get(position).getOriginal_title())){
+            // this item is in my database
+            viewHolder.getFavorite().setBackgroundResource(R.drawable.ic_favorite_24dp);
+        }else {
+            viewHolder.getFavorite().setBackgroundResource(R.drawable.ic_favorite_outline_24dp);
+        }
+
+
+
+    }
+
+    private void addItem(int position) {
+        //add item to favorite
+        FavoriteModel item = new FavoriteModel();
+        item.setTitleKey(mDataSet.get(position).getOriginal_title());
+        item.setIdValue(mDataSet.get(position).getId());
+        new FavoriteStore(mContext).update(item);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataSet.size();
+    }
+
+    // like button effect
+    private void updateHeartButton(final ViewHolder holder, boolean animated) {
+        if (animated) {
+            if (!likeAnimations.containsKey(holder)) {
+                AnimatorSet animatorSet = new AnimatorSet();
+                likeAnimations.put(holder, animatorSet);
+
+                ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(holder.getFavorite(), "rotation", 0f, 360f);
+                rotationAnim.setDuration(300);
+                rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
+
+                ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(holder.getFavorite(), "scaleX", 0.2f, 1f);
+                bounceAnimX.setDuration(300);
+                bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
+
+                ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(holder.getFavorite(), "scaleY", 0.2f, 1f);
+                bounceAnimY.setDuration(300);
+                bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
+                bounceAnimY.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        holder.getFavorite().setBackgroundResource(R.drawable.ic_favorite_24dp);
+                    }
+                });
+
+                animatorSet.play(rotationAnim);
+                animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
+
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        // do something
+                    }
+                });
+
+                animatorSet.start();
+            }
+        } else {
+            if (likedPositions.contains(holder.getPosition())) {
+                holder.getFavorite().setBackgroundResource(R.drawable.ic_favorite_24dp);
+            } else {
+                holder.getFavorite().setBackgroundResource(R.drawable.ic_favorite_outline_24dp);            }
+        }
     }
 
 
