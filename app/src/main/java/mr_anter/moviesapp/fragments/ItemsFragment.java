@@ -31,9 +31,11 @@ import java.util.List;
 import mr_anter.moviesapp.R;
 import mr_anter.moviesapp.app.AppController;
 import mr_anter.moviesapp.constants.Constants;
+import mr_anter.moviesapp.models.FavoriteModel;
 import mr_anter.moviesapp.models.MoviesPojo;
 import mr_anter.moviesapp.myAdabter.MyAdapter;
 import mr_anter.moviesapp.parser.JsonParser;
+import mr_anter.moviesapp.store.FavoriteStore;
 
 
 /**
@@ -91,10 +93,6 @@ public class ItemsFragment extends Fragment {
         int id = item.getItemId();
 
         switch (id){
-            case R.id.action_search:
-                //do some thing
-                Toast.makeText(getActivity(), "search", Toast.LENGTH_SHORT).show();
-                return true;
             case R.id.action_change_layoutManager:
                 // swap between two options
                 toggle();
@@ -106,11 +104,14 @@ public class ItemsFragment extends Fragment {
                 }
 
                 // Start our refresh background task
-                initiateRefresh(1);
+                initiateRefresh(0);
 
                 return true;
             case R.id.menu_top_rated:
                 initiateRefresh(1);
+                return true;
+            case R.id.menu_favorite:
+                showFavoriteItemsOnly(new FavoriteStore(getActivity()).findAll());
                 return true;
         }
 
@@ -175,7 +176,7 @@ public class ItemsFragment extends Fragment {
         }
 
         // Start our refresh background task
-        initiateRefresh(1);
+        initiateRefresh(0);
 
 
 
@@ -235,7 +236,7 @@ public class ItemsFragment extends Fragment {
             public void onRefresh() {
                 Log.i("swip", "onRefresh called from SwipeRefreshLayout");
 
-                initiateRefresh(1);
+                initiateRefresh(0);
             }
         });
 
@@ -326,6 +327,24 @@ public class ItemsFragment extends Fragment {
 
         // Stop the refreshing indicator
         mSwipeRefreshLayout.setRefreshing(false);
+
+    }
+
+    private void showFavoriteItemsOnly(List<FavoriteModel> list){
+        List<MoviesPojo> mList = new ArrayList<>();
+        for(FavoriteModel model : list){
+            String id = model.getIdValue();
+            for (MoviesPojo moviesPojo : mDataset){
+                if(id.equalsIgnoreCase(moviesPojo.getId())){
+                    mList.add(moviesPojo);
+                }
+            }
+        }
+        clearDataSet();
+        for (MoviesPojo moviesPojo : mList){
+            mDataset.add(moviesPojo);
+            mAdapter.notifyItemInserted(mDataset.size()-1);
+        }
 
     }
 

@@ -30,12 +30,12 @@
 
 
 
-    <item
+    <!--<item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_24dp"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="always" />
+        app:showAsAction="always" />-->
     <item
         android:id="@+id/action_change_layoutManager"
         android:icon="@drawable/ic_view_list_24dp"
