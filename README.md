@@ -13,3 +13,10 @@ you can see promo vedio from [here](https://youtu.be/QwtkT_obtWY)
 
 # Screen shots from phone
 ![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-015934.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020016.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020207.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020243.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020104.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020131.png)
+
+# Screen shots from taplet 
+![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-011148.png)
+
+
+if you want any explanation plz, contact with me ga30000@gmail.com
+
