@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import mr_anter.moviesapp.R;
 import mr_anter.moviesapp.models.ReviewModel;
 
@@ -27,9 +29,9 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView author;
-        private final TextView url;
-        private final TextView content;
+        @Bind(R.id.author) TextView author;
+        @Bind(R.id.txtUrl) TextView url;
+        @Bind(R.id.txtReviewMsg) TextView content;
 
         public TextView getAuthor() {
             return author;
@@ -52,9 +54,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
                     Log.d(TAG, "Element " + getPosition() + " clicked.");
                 }
             });
-            author = (TextView) v.findViewById(R.id.author);
-            content = (TextView) v.findViewById(R.id.txtReviewMsg);
-            url = (TextView) v.findViewById(R.id.txtUrl);
+            ButterKnife.bind(this, v);
         }
 
 
