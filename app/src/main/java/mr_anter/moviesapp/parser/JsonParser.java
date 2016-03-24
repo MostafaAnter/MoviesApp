@@ -9,6 +9,7 @@ import java.util.List;
 
 import mr_anter.moviesapp.constants.Constants;
 import mr_anter.moviesapp.models.MoviesPojo;
+import mr_anter.moviesapp.models.ReviewModel;
 
 /**
  * Created by mostafa on 20/03/16.
@@ -48,5 +49,55 @@ public class JsonParser{
 
 
     }
+
+    public static String parseTrailer(String feed){
+        try {
+            JSONObject  jsonRootObject = new JSONObject(feed);//done
+            //Get the instance of JSONArray that contains JSONObjects
+            JSONArray jsonMoviesArray = jsonRootObject.optJSONArray("results");
+            String code = "";
+            for (int i = 0; i < jsonMoviesArray.length(); i++) {
+                JSONObject jsonObject = jsonMoviesArray.getJSONObject(i);
+                String type = jsonObject.optString("type");
+
+                if (type.equalsIgnoreCase("trailer"))
+                    code = jsonObject.optString("key");
+            }
+            return code;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public static List<ReviewModel> parseJsonReview(String feed){
+
+        try {
+            JSONObject  jsonRootObject = new JSONObject(feed);//done
+            //Get the instance of JSONArray that contains JSONObjects
+            JSONArray jsonMoviesArray = jsonRootObject.optJSONArray("results");
+            List<ReviewModel> flowerList = new ArrayList<>();
+            for (int i = 0; i < jsonMoviesArray.length(); i++) {
+                JSONObject jsonObject = jsonMoviesArray.getJSONObject(i);
+                String author = jsonObject.optString("author");
+                String content = jsonObject.optString("content");
+                String url = jsonObject.optString("url");
+
+                ReviewModel moviesPojo = new ReviewModel();
+                moviesPojo.setAuthor(author);
+                moviesPojo.setUrl(url);
+                moviesPojo.setContent(content);
+                flowerList.add(moviesPojo);
+            }
+            return flowerList;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
+    }
+
 
 }
