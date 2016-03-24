@@ -1,1 +1,2 @@
-# MoviesApp (Final project that i submited to MAL program)
+# MoviesApp 
+(Final project that i submited to MAL program)
