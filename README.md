@@ -11,6 +11,13 @@ Discover New Movies & TV Shows , manage your favorite shows and discover top rat
  
 you can see promo vedio from [here](https://youtu.be/QwtkT_obtWY)
 
+# Screen shots from version2
+- open Trial by youtube
+- and show Reviews :)
+
+![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-185120.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-220039.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-220058.png)
+
+
 # Screen shots from phone
 ![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-015934.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020016.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020207.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020243.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020104.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020131.png)
 
