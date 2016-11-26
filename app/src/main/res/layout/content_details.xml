@@ -34,8 +34,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
-        style= "@style/CustomRatingBar"
         android:id="@+id/ratingBar"
+        style="?android:attr/ratingBarStyleSmall"
         android:numStars="5"
         android:stepSize="0.01"
         android:isIndicator="true"/>
