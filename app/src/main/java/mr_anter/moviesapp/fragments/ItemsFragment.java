@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Cache;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import mr_anter.moviesapp.R;
 import mr_anter.moviesapp.app.AppController;
 import mr_anter.moviesapp.constants.Constants;
@@ -36,12 +39,17 @@ import mr_anter.moviesapp.models.MoviesPojo;
 import mr_anter.moviesapp.myAdabter.MyAdapter;
 import mr_anter.moviesapp.parser.JsonParser;
 import mr_anter.moviesapp.store.FavoriteStore;
+import mr_anter.moviesapp.utils.MoviesHelper;
+import mr_anter.moviesapp.utils.SweetDialogHelper;
 
 
 /**
  * Created by mostafa on 08/03/16.
  */
 public class ItemsFragment extends Fragment {
+
+    @Bind(R.id.noData)LinearLayout noDataView;
+
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 3;
 
@@ -140,6 +148,8 @@ public class ItemsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_items, container, false);
 
+        ButterKnife.bind(this, view);
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
         // initialize adapter
@@ -151,6 +161,7 @@ public class ItemsFragment extends Fragment {
         // Retrieve the SwipeRefreshLayout and ListView instances
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         // Set the color scheme of the SwipeRefreshLayout by providing 4 color resource ids
+        //noinspection ResourceAsColor
         mSwipeRefreshLayout.setColorScheme(
                 R.color.swipe_color_1, R.color.swipe_color_2,
                 R.color.swipe_color_3, R.color.swipe_color_4);
@@ -245,70 +256,99 @@ public class ItemsFragment extends Fragment {
     }
 
     private void initiateRefresh(int i) {
-        String Url = "";
-        switch (i){
-            case 0:
-                Url = Constants.POPULAR_MOVIES;
-                break;
-            case 1:
-                Url = Constants.TOP_RATED_MOVIES;
-                break;
-            default:
-                Url = Constants.POPULAR_MOVIES;
-        }
-        /**
-         * Execute the background task, which uses {@link AsyncTask} to load the data.
-         */
-        // We first check for cached request
-        Cache cache = AppController.getInstance().getRequestQueue().getCache();
-        Cache.Entry entry = cache.get(Url);
-        if (entry != null) {
-            // fetch the data from cache
-            try {
-                String data = new String(entry.data, "UTF-8");
-                clearDataSet();
-                Iterator iterator = JsonParser.parseJsonFeed(data).iterator();
-                while (iterator.hasNext()){
-                    MoviesPojo moviesPojo = (MoviesPojo)iterator.next();
-                    mDataset.add(moviesPojo);
-                    mAdapter.notifyItemInserted(mDataset.size() - 1);
+        if (MoviesHelper.isOnline(getActivity())) {
+            String Url = "";
+            switch (i){
+                case 0:
+                    Url = Constants.POPULAR_MOVIES;
+                    break;
+                case 1:
+                    Url = Constants.TOP_RATED_MOVIES;
+                    break;
+                default:
+                    Url = Constants.POPULAR_MOVIES;
+            }
+            /**
+             * Execute the background task, which uses {@link AsyncTask} to load the data.
+             */
+            // We first check for cached request
+            Cache cache = AppController.getInstance().getRequestQueue().getCache();
+            Cache.Entry entry = cache.get(Url);
+            if (entry != null) {
+                // fetch the data from cache
+                try {
+                    String data = new String(entry.data, "UTF-8");
+                    clearDataSet();
+                    Iterator iterator = JsonParser.parseJsonFeed(data).iterator();
+                    while (iterator.hasNext()){
+                        MoviesPojo moviesPojo = (MoviesPojo)iterator.next();
+                        mDataset.add(moviesPojo);
+                        mAdapter.notifyItemInserted(mDataset.size() - 1);
+                    }
+
+                    if (mDataset.size() > 0){
+                        noDataView.setVisibility(View.GONE);
+                    }else {
+                        noDataView.setVisibility(View.VISIBLE);
+                    }
+
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+
+                    if (mDataset.size() > 0){
+                        noDataView.setVisibility(View.GONE);
+                    }else {
+                        noDataView.setVisibility(View.VISIBLE);
+                    }
                 }
 
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
             }
+            StringRequest strReq = new StringRequest(Request.Method.GET,
+                    Url, new Response.Listener<String>() {
 
-        }
-        StringRequest strReq = new StringRequest(Request.Method.GET,
-                Url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
 
-            @Override
-            public void onResponse(String response) {
+                    Log.d("response", response);
+                    clearDataSet();
+                    Iterator iterator = JsonParser.parseJsonFeed(response).iterator();
+                    while (iterator.hasNext()){
+                        MoviesPojo moviesPojo = (MoviesPojo)iterator.next();
+                        mDataset.add(moviesPojo);
+                        mAdapter.notifyItemInserted(mDataset.size()-1);
+                    }
+                    // disappear progress
+                    onRefreshComplete();
 
-                Log.d("response", response);
-                clearDataSet();
-                Iterator iterator = JsonParser.parseJsonFeed(response).iterator();
-                while (iterator.hasNext()){
-                    MoviesPojo moviesPojo = (MoviesPojo)iterator.next();
-                    mDataset.add(moviesPojo);
-                    mAdapter.notifyItemInserted(mDataset.size()-1);
+                    if (mDataset.size() > 0){
+                        noDataView.setVisibility(View.GONE);
+                    }else {
+                        noDataView.setVisibility(View.VISIBLE);
+                    }
+
                 }
-                // disappear progress
-                onRefreshComplete();
+            }, new Response.ErrorListener() {
 
-            }
-        }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    // Stop the refreshing indicator
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    Log.d("response", error.toString());
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // Stop the refreshing indicator
-                mSwipeRefreshLayout.setRefreshing(false);
-                Log.d("response", error.toString());
-            }
-        });
+                    if (mDataset.size() > 0){
+                        noDataView.setVisibility(View.GONE);
+                    }else {
+                        noDataView.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
 
-        // Adding request to volley request queue
-        AppController.getInstance().addToRequestQueue(strReq);
+            // Adding request to volley request queue
+            AppController.getInstance().addToRequestQueue(strReq);
+        } else {
+            onRefreshComplete();
+            new SweetDialogHelper(getActivity()).showErrorMessage("Error!", "Check your network connection");
+        }
 
     }
 
