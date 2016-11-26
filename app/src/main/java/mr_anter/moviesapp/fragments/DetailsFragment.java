@@ -40,6 +40,7 @@ import mr_anter.moviesapp.models.MoviesPojo;
 import mr_anter.moviesapp.models.ReviewModel;
 import mr_anter.moviesapp.myAdabter.MyAdapter;
 import mr_anter.moviesapp.myAdabter.ReviewsAdapter;
+import mr_anter.moviesapp.myAdabter.TrailersAdapter;
 import mr_anter.moviesapp.parser.JsonParser;
 import mr_anter.moviesapp.utils.SquaredImageView;
 
@@ -65,6 +66,11 @@ public class DetailsFragment extends Fragment {
     protected ReviewsAdapter mAdapter;
     protected List<ReviewModel> mDataset;
     protected RecyclerView.LayoutManager mLayoutManager;
+
+    // for trailers
+    protected RecyclerView mTrailersRecyclerView;
+    protected TrailersAdapter mTrailersAdapter;
+    protected List<String> mTrailersIDsSet;
     public DetailsFragment(){
 
     }
@@ -74,6 +80,7 @@ public class DetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // initialize dataSet
         mDataset = new ArrayList<>();
+        mTrailersIDsSet = new ArrayList<>();
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment
@@ -98,6 +105,13 @@ public class DetailsFragment extends Fragment {
         // initialize adapter
         mAdapter = new ReviewsAdapter(mDataset);
         mRecyclerView.setAdapter(mAdapter);
+
+        // populate trailers recycler view
+        mTrailersRecyclerView = (RecyclerView) view.findViewById(R.id.trailersRecyclerView);
+        mTrailersRecyclerView.setHasFixedSize(true);
+        // initialize adapter
+        mTrailersAdapter = new TrailersAdapter(getActivity(), mTrailersIDsSet);
+        mTrailersRecyclerView.setAdapter(mTrailersAdapter);
 
         TextView tv = (TextView) view.findViewById(R.id.original_title);
         TextView tv1 = (TextView) view.findViewById(R.id.release_date);
@@ -182,6 +196,11 @@ public class DetailsFragment extends Fragment {
                     .findFirstCompletelyVisibleItemPosition();
         }
 
+        if (mTrailersRecyclerView.getLayoutManager() != null) {
+            scrollPosition = ((LinearLayoutManager) mTrailersRecyclerView.getLayoutManager())
+                    .findFirstCompletelyVisibleItemPosition();
+        }
+
         switch (layoutManagerType) {
             case GRID_LAYOUT_MANAGER:
                 mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
@@ -198,6 +217,9 @@ public class DetailsFragment extends Fragment {
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.scrollToPosition(scrollPosition);
+
+        mTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mTrailersRecyclerView.scrollToPosition(scrollPosition);
     }
 
     // to call youtube provider :) by intent
@@ -238,6 +260,16 @@ public class DetailsFragment extends Fragment {
                     // retrieve trial id
                     movie_trial_id = JsonParser.parseTrailer(data).get(0);
                     // manipulate new lis
+                    if (mTrailersIDsSet != null){
+                        mTrailersIDsSet.clear();
+                        mTrailersAdapter.notifyDataSetChanged();
+                    }
+                    Iterator iterator = JsonParser.parseTrailer(data).iterator();
+                    while (iterator.hasNext()){
+                        String trailerID = (String) iterator.next();
+                        mTrailersIDsSet.add(trailerID);
+                        mTrailersAdapter.notifyItemInserted(mTrailersIDsSet.size() - 1);
+                    }
 
 
                 }else {
@@ -267,6 +299,17 @@ public class DetailsFragment extends Fragment {
                     // retrieve trial id
                     movie_trial_id = JsonParser.parseTrailer(response).get(0);
                     // manipulate new list
+                    // manipulate new lis
+                    if (mTrailersIDsSet != null){
+                        mTrailersIDsSet.clear();
+                        mTrailersAdapter.notifyDataSetChanged();
+                    }
+                    Iterator iterator = JsonParser.parseTrailer(response).iterator();
+                    while (iterator.hasNext()){
+                        String trailerID = (String) iterator.next();
+                        mTrailersIDsSet.add(trailerID);
+                        mTrailersAdapter.notifyItemInserted(mTrailersIDsSet.size() - 1);
+                    }
 
 
                 }else {

@@ -82,7 +82,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view.
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.reviews_item_forecast, viewGroup, false);
+                .inflate(R.layout.trailer_item, viewGroup, false);
 
         return new ViewHolder(v);
     }
@@ -96,7 +96,8 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHo
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
         if (mDataSet.get(position) != null) {
-            viewHolder.getTrailerText().setText("Trailer" + mDataSet.get(position + 1));
+            int x = position+1;
+            viewHolder.getTrailerText().setText("Trailer " + x);
         }
     }
 
