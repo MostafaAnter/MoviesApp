@@ -19,7 +19,10 @@ you can see promo vedio from [here](https://youtu.be/QwtkT_obtWY)
 
 
 # Screen shots from phone
-![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-015934.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020016.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020207.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020243.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020104.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020131.png)
+<img src="https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-11-27-011337.png" alt="" width="300" height="whatever">
+<img src="https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-11-27-011352.png" alt="" width="300" height="whatever">
+<img src="https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-11-27-011405.png" alt="" width="300" height="whatever">
+![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-015934.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020243.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020104.png)![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-020131.png)
 
 # Screen shots from taplet 
 ![alt tag](https://github.com/MostafaAnter/MoviesApp/blob/master/device-2016-03-24-011148.png)
