@@ -16,7 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -36,18 +36,19 @@ import java.util.List;
 import mr_anter.moviesapp.R;
 import mr_anter.moviesapp.app.AppController;
 import mr_anter.moviesapp.constants.Constants;
+import mr_anter.moviesapp.models.FavoriteModel;
 import mr_anter.moviesapp.models.MoviesPojo;
 import mr_anter.moviesapp.models.ReviewModel;
-import mr_anter.moviesapp.myAdabter.MyAdapter;
 import mr_anter.moviesapp.myAdabter.ReviewsAdapter;
 import mr_anter.moviesapp.myAdabter.TrailersAdapter;
 import mr_anter.moviesapp.parser.JsonParser;
+import mr_anter.moviesapp.store.FavoriteStore;
 import mr_anter.moviesapp.utils.SquaredImageView;
 
 /**
  * Created by mostafa on 08/03/16.
  */
-public class DetailsFragment extends Fragment {
+public class DetailsFragment extends Fragment  implements View.OnClickListener {
     public static final String ARG_ITEM_ID = "item_id";
     private static MoviesPojo moviesPojo;
     private static String movie_trial_id;
@@ -55,6 +56,23 @@ public class DetailsFragment extends Fragment {
 
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 3;
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.favorite_button:
+                if (!new FavoriteStore(getActivity()).findItem(moviesPojo.getId(),
+                        moviesPojo.getOriginal_title())){
+                    // this item is in my database
+                    addItemToFav();
+                    favoriteImage.setBackgroundResource(R.drawable.ic_favorite_24dp);
+                }else {
+                    removeItemFromFav();
+                    favoriteImage.setBackgroundResource(R.drawable.ic_favorite_outline_24dp);
+                }
+                break;
+        }
+    }
 
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
@@ -75,6 +93,7 @@ public class DetailsFragment extends Fragment {
 
     }
 
+    private ImageView favoriteImage;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,6 +191,22 @@ public class DetailsFragment extends Fragment {
                 watchYoutubeVideo(movie_trial_id);
             }
         });
+
+        // initiate favorite image
+        favoriteImage = (ImageView) view.findViewById(R.id.favorite_button);
+        favoriteImage.setOnClickListener(this);
+        // check if movie in favorite
+        if (new FavoriteStore(getActivity()).findItem(moviesPojo.getId(),
+                moviesPojo.getOriginal_title())){
+            // this item is in my database
+            favoriteImage.setBackgroundResource(R.drawable.ic_favorite_24dp);
+        }else {
+            favoriteImage.setBackgroundResource(R.drawable.ic_favorite_outline_24dp);
+        }
+
+
+
+
         return view;
     }
 
@@ -345,5 +380,20 @@ public class DetailsFragment extends Fragment {
             mDataset.clear();
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void addItemToFav() {
+        //add item to favorite
+        FavoriteModel item = new FavoriteModel();
+        item.setTitleKey(moviesPojo.getOriginal_title());
+        item.setIdValue(moviesPojo.getId());
+        new FavoriteStore(getActivity()).update(item);
+    }
+
+    private void removeItemFromFav(){
+        FavoriteModel item = new FavoriteModel();
+        item.setTitleKey(moviesPojo.getOriginal_title());
+        item.setIdValue(moviesPojo.getId());
+        new FavoriteStore(getActivity()).remove(item);
     }
 }
