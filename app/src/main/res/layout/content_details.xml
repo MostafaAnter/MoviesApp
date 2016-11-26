@@ -46,6 +46,22 @@
         android:layout_marginLeft="@dimen/text_margin"
         style="?android:attr/textAppearanceSmall"
         android:textStyle="bold" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/text_margin"
+        style="?android:attr/textAppearanceMedium"
+        android:textStyle="bold"
+        android:text="@string/trailers" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/trailersRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/trailer_item"
+        android:layout_marginTop="5dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -53,17 +69,7 @@
         android:layout_marginLeft="@dimen/text_margin"
         style="?android:attr/textAppearanceMedium"
         android:textStyle="bold"
-        android:text="Reviews :" />
-    <Button
-        android:id="@+id/load"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="get Reviews?"
-        android:textStyle="bold"
-        android:textColor="#ffffff"
-        android:background="@color/colorPrimary"
-        android:textAllCaps="false"/>
+        android:text="@string/reviews" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"

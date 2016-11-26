@@ -50,20 +50,22 @@ public class JsonParser{
 
     }
 
-    public static String parseTrailer(String feed){
+    public static List<String> parseTrailer(String feed){
         try {
             JSONObject  jsonRootObject = new JSONObject(feed);//done
             //Get the instance of JSONArray that contains JSONObjects
             JSONArray jsonMoviesArray = jsonRootObject.optJSONArray("results");
-            String code = "";
+            List<String> trailersCode = new ArrayList<>();
             for (int i = 0; i < jsonMoviesArray.length(); i++) {
                 JSONObject jsonObject = jsonMoviesArray.getJSONObject(i);
                 String type = jsonObject.optString("type");
 
-                if (type.equalsIgnoreCase("trailer"))
-                    code = jsonObject.optString("key");
+                if (type.equalsIgnoreCase("trailer")){
+                    trailersCode.add(jsonObject.optString("key"));
+                }
+
             }
-            return code;
+            return trailersCode;
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

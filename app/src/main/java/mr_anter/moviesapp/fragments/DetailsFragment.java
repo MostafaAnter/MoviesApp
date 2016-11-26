@@ -102,14 +102,6 @@ public class DetailsFragment extends Fragment {
         TextView tv = (TextView) view.findViewById(R.id.original_title);
         TextView tv1 = (TextView) view.findViewById(R.id.release_date);
         TextView tv3 = (TextView) view.findViewById(R.id.overview);
-        final Button btn = (Button) view.findViewById(R.id.load);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btn.setVisibility(View.GONE);
-                initiateReviewAndTrial(1, moviesPojo.getId());
-            }
-        });
         SquaredImageView imageView = (SquaredImageView) view.findViewById(R.id.feedImage1);
         final ProgressBar pb = (ProgressBar) view.findViewById(R.id.progressBar);
 
@@ -134,17 +126,6 @@ public class DetailsFragment extends Fragment {
                     .getSerializable(KEY_LAYOUT_MANAGER);
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
-
-
-
-        // get movie trial id
-        initiateReviewAndTrial(0, moviesPojo.getId());
-
-
-
-
-
-
         // Feed image
         if (moviesPojo.getBackdrop_path() != null) {
             // show progressBar
@@ -178,6 +159,15 @@ public class DetailsFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // get movie trial id
+        initiateReviewAndTrial(0, moviesPojo.getId());
+        // get movie reviews id
+        initiateReviewAndTrial(1, moviesPojo.getId());
     }
 
     /**
@@ -246,7 +236,9 @@ public class DetailsFragment extends Fragment {
                 String data = new String(entry.data, "UTF-8");
                 if(index == 0){
                     // retrieve trial id
-                    movie_trial_id = JsonParser.parseTrailer(data);
+                    movie_trial_id = JsonParser.parseTrailer(data).get(0);
+                    // manipulate new lis
+
 
                 }else {
                     // retrieve review
@@ -273,7 +265,9 @@ public class DetailsFragment extends Fragment {
             public void onResponse(String response) {
                 if(index == 0){
                     // retrieve trial id
-                    movie_trial_id = JsonParser.parseTrailer(response);
+                    movie_trial_id = JsonParser.parseTrailer(response).get(0);
+                    // manipulate new list
+
 
                 }else {
                     // retrieve review

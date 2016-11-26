@@ -5,4 +5,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="there_is_no_data">There is no data</string>
+    <string name="trailers">Trailers :</string>
+    <string name="reviews">Reviews :</string>
 </resources>
