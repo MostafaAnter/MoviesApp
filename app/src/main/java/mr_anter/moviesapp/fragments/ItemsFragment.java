@@ -73,6 +73,10 @@ public class ItemsFragment extends Fragment {
     private Menu menu;
     private boolean isGridtView;
 
+    // for save instance state
+    static final String SORT_CRITERIA = "sort_criteria";
+    private int mCurrentSortCriteria = 0;
+
     public ItemsFragment(){
 
     }
@@ -112,11 +116,16 @@ public class ItemsFragment extends Fragment {
                 }
 
                 // Start our refresh background task
-                initiateRefresh(0);
-
+                if (mCurrentSortCriteria == 0) {
+                    initiateRefresh(0);
+                    mCurrentSortCriteria = 0;
+                }else {
+                    initiateRefresh(1);
+                }
                 return true;
             case R.id.menu_top_rated:
                 initiateRefresh(1);
+                mCurrentSortCriteria = 1;
                 return true;
             case R.id.menu_favorite:
                 showFavoriteItemsOnly(new FavoriteStore(getActivity()).findAll());
@@ -186,9 +195,14 @@ public class ItemsFragment extends Fragment {
             mSwipeRefreshLayout.setRefreshing(true);
         }
 
-        // Start our refresh background task
-        initiateRefresh(0);
-
+        if (savedInstanceState != null && savedInstanceState.getInt(SORT_CRITERIA, -1) == 1) {
+            // Start our refresh background task
+            initiateRefresh(1);
+            mCurrentSortCriteria = 1;
+        }else {
+            initiateRefresh(0);
+            mCurrentSortCriteria = 0;
+        }
 
 
         return view;
@@ -232,6 +246,8 @@ public class ItemsFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+        //save sort criteria
+        savedInstanceState.putInt(SORT_CRITERIA, mCurrentSortCriteria);
         // Save currently selected layout manager.
         savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
@@ -247,7 +263,13 @@ public class ItemsFragment extends Fragment {
             public void onRefresh() {
                 Log.i("swip", "onRefresh called from SwipeRefreshLayout");
 
-                initiateRefresh(0);
+                if (mCurrentSortCriteria == 0) {
+                    initiateRefresh(0);
+                    mCurrentSortCriteria = 0;
+                } else {
+                    initiateRefresh(1);
+                    mCurrentSortCriteria = 1;
+                }
             }
         });
 
